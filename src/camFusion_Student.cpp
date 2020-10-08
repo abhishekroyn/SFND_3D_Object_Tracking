@@ -159,5 +159,58 @@ void computeTTCLidar(std::vector<LidarPoint> &lidarPointsPrev,
 
 void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bbBestMatches, DataFrame &prevFrame, DataFrame &currFrame)
 {
-    // ...
+    // loop through each of the bounding boxes in previous frame
+    // loop through each of the matches
+    // filter out matches belonging to a particular bounding box in previous frame
+    // loop throught each of the filtered matches
+    // loop through each of the bounding boxes in current frame
+    // associate each of the bounding boxes in current frame to their corresponding matched keypoints
+    // find out bounding box in current frame having maximum occurences of the matched keypoints
+    // associate bounding box from previous frame to the bounding box in current frame
+    // repeat the process for each of the bounding boxes in previous frame to associate it with the corresponding bounding box in current frame
+
+    for(auto it = prevFrame.boundingBoxes.begin(); it != prevFrame.boundingBoxes.end(); it++)
+    {
+        std::vector<vector<cv::DMatch>::iterator> enclosedMatches;
+        for(auto it1 = matches.begin(); it1 != matches.end(); it1++)
+        {
+            int prevFrameKeyPointIdx = it1->queryIdx;
+            if(it->roi.contains(prevFrame.keypoints.at(prevFrameKeyPointIdx).pt))
+            {
+                enclosedMatches.push_back(it1);
+            }
+        }
+
+        // contains a sorted list of key-value pairs, while permitting multiple entries with the same key
+        std::multimap<int, int> boxIdPairKeyPointIdx;
+
+        for(auto it2 = enclosedMatches.begin(); it2 != enclosedMatches.end(); it2++)
+        {
+            int currFrameKeyPointIdx = (*it2)->trainIdx;
+            for(auto it3 = currFrame.boundingBoxes.begin(); it3 != currFrame.boundingBoxes.end(); it3++)
+            {
+                if(it3->roi.contains(currFrame.keypoints.at(currFrameKeyPointIdx).pt))
+                {
+                    int currFrameBoxId = it3->boxID;
+                    boxIdPairKeyPointIdx.insert(std::pair<int, int>(currFrameBoxId, currFrameKeyPointIdx));
+                }
+            }
+        }
+
+        int currFrameKeyPointMaxCount = 0;
+        int currFrameBoxIdBestIndex = 1e8;
+
+        if(boxIdPairKeyPointIdx.size() > 0)
+        {
+            for(auto it4 = boxIdPairKeyPointIdx.begin(); it4 != boxIdPairKeyPointIdx.end(); it4++)
+            {
+                if(boxIdPairKeyPointIdx.count(it4->first) > currFrameKeyPointMaxCount)
+                {
+                    currFrameKeyPointMaxCount = boxIdPairKeyPointIdx.count(it4->first);
+                    currFrameBoxIdBestIndex = it4->first;
+                }
+            }
+            bbBestMatches.insert(std::pair<int, int>(it->boxID, currFrameBoxIdBestIndex));
+        }
+    }
 }
