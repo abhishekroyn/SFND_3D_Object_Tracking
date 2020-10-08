@@ -93,6 +93,12 @@ int main(int argc, const char *argv[])
         frame.cameraImg = img;
         dataBuffer.push_back(frame);
 
+        // simple implementation of ring buffer for popping out old images
+        if (dataBuffer.size() > dataBufferSize)
+        {
+            dataBuffer.erase(dataBuffer.begin());
+        }
+
         cout << "#1 : LOAD IMAGE INTO BUFFER done" << endl;
 
 
