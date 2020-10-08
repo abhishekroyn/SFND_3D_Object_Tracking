@@ -153,7 +153,51 @@ void computeTTCCamera(std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPo
 void computeTTCLidar(std::vector<LidarPoint> &lidarPointsPrev,
                      std::vector<LidarPoint> &lidarPointsCurr, double frameRate, double &TTC)
 {
-    // ...
+    // assume width of the ego lane
+    // remove lidar points outside the ego lane, if any
+    // store the lidar points in heap data structure
+    // sort the lidar points in order
+    // choose first 100 lidar points to determine their mean location
+    // do the same for both previous and current lidar points to find respective closest mean distances
+    // calculate time between two measurements in seconds
+    // calculate TTC based on equation derived in the tutorial
+
+    double laneWidth = 4.0;                 // assumed width of the ego lane
+
+    for (auto it1 = lidarPointsPrev.begin(); it1 != lidarPointsPrev.end(); ++it1)
+    {
+        if (abs(it1->y) <= laneWidth / 2.0)
+        { // 3D point within ego lane?
+            lidarPointsPrev.erase(it1);
+            it1--;
+        }
+    }
+
+    for (auto it2 = lidarPointsCurr.begin(); it2 != lidarPointsCurr.end(); ++it2)
+    {
+        if (abs(it2->y) <= laneWidth / 2.0)
+        { // 3D point within ego lane?
+            lidarPointsCurr.erase(it2);
+            it2--;
+        }
+    }
+
+    unsigned int closestPointsCount = 100;
+
+    auto compOperator = [](const LidarPoint &lp1, const LidarPoint &lp2){return lp1.x > lp2.x;};
+
+    std::make_heap(lidarPointsPrev.begin(), lidarPointsPrev.end(), comp);
+    std::sort_heap(lidarPointsPrev.begin(), lidarPointsPrev.begin() + closestPointsCount, comp);
+
+    std::make_heap(lidarPointsCurr.begin(), lidarPointsCurr.end(), comp);
+    std::sort_heap(lidarPointsCurr.begin(), lidarPointsCurr.begin() + closestPointsCount, comp);
+
+    auto sumLidarPointX = [](const double sumLidarPoint, const LidarPoint &lp) {return sumLidarPoint + lp.x;};
+    double meanXPrev = std::accumulate(lidarPointsPrev.begin(), lidarPointsPrev.begin() + closestPointsCount, 0.0, sumLidarPointX) / closestPointsCount;
+    double meanXCurr = std::accumulate(lidarPointsCurr.begin(), lidarPointsCurr.begin() + closestPointsCount, 0.0, sumLidarPointX) / closestPointsCount;
+
+    double dT = 1.0 / frameRate;
+    TTC = meanXCurr * dT / (meanXPrev - meanXCurr);
 }
 
 
