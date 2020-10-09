@@ -138,7 +138,71 @@ void show3DObjects(std::vector<BoundingBox> &boundingBoxes, cv::Size worldSize, 
 // associate a given bounding box with the keypoints it contains
 void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPoint> &kptsCurr, std::vector<cv::DMatch> &kptMatches)
 {
-    // ...
+    // loop through each of the keypoint matches
+    // get the keypoint index for current frame using keypoint match
+    // get the keypoint for current frame using keypoint index
+    // check if bounding box for current frame contains the keypoint
+    // get the keypoint index for previous frame using keypoint match
+    // get the keypoint for previous frame using keypoint index
+    // calculate euclidean distance between keypoints from current frame and previous frame
+    // store the euclidean distance in a vector array
+    // repeat the same for rest of the keypoint matches
+    // calculate mean value of all the stored euclidean distances
+    // loop through each of the keypoint matches
+    // get the keypoint index for current frame using keypoint match
+    // get the keypoint for current frame using keypoint index
+    // check if bounding box for current frame contains the keypoint
+    // get the keypoint index for previous frame using keypoint match
+    // get the keypoint for previous frame using keypoint index
+    // calculate euclidean distance between keypoints from current frame and previous frame
+    // calculate enhanced mean value of all the stored euclidean distances by including a multiplication factor
+    // check if the euclidean distance is less than this enhanced mean value
+    // store the keypoint for current frame with bounding box for current frame
+    // store the keypoint matches for current frame with bounding box for current frame
+    // repeat the same for rest of the keypoint matches
+
+    std::vector<double> euclidDist;
+
+    for(auto it = kptMatches.begin(); it != kptMatches.end(); it++)
+    {
+        int kptsCurrIndex = (*it).trainIdx;
+        const auto &keyPointCurr = kptsCurr[kptsCurrIndex];
+
+        if(boundingBox.roi.contains(keyPointCurr.pt))
+        {
+            int kptsPrevIndex = (*it).queryIdx;
+            const auto &keyPointPrev = kptsPrev[kptsPrevIndex];
+
+            euclidDist.push_back(cv::norm(keyPointCurr.pt - keyPointPrev.pt));
+        }
+    }
+
+    double euclidDistMeanMultiplier = 1.5;
+
+    int euclidDistCount =  euclidDist.size();
+    double euclidDistMean = std::accumulate(euclidDist.begin(), euclidDist.end(), 0.0) / euclidDistCount;
+
+    for(auto it = kptMatches.begin(); it != kptMatches.end(); it++)
+    {
+        int kptsCurrIndex = (*it).trainIdx;
+        const auto &keyPointCurr = kptsCurr[kptsCurrIndex];
+
+        if(boundingBox.roi.contains(keyPointCurr.pt))
+        {
+            int kptsPrevIndex = (*it).queryIdx;
+            const auto &keyPointPrev = kptsPrev[kptsPrevIndex];
+
+            double euclidDistTemp = cv::norm(keyPointCurr.pt - keyPointPrev.pt);
+
+            double euclidDistMeanEnhanced = euclidDistMean * euclidDistMeanMultiplier;
+            if(euclidDistTemp < euclidDistMeanEnhanced)
+            {
+                boundingBox.keypoints.push_back(keyPointCurr);
+                boundingBox.kptMatches.push_back(*it);
+            }
+        }
+    }
+    std::cout << "euclidean distance - mean value : " << euclidDistMean << " keypoint matches - count before filtering : " << euclidDistCount << " count after filtering " << boundingBox.keypoints.size() << std::endl;
 }
 
 
