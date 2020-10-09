@@ -315,11 +315,11 @@ void computeTTCLidar(std::vector<LidarPoint> &lidarPointsPrev,
 
     auto compOperator = [](const LidarPoint &lp1, const LidarPoint &lp2){return lp1.x > lp2.x;};
 
-    std::make_heap(lidarPointsPrev.begin(), lidarPointsPrev.end(), comp);
-    std::sort_heap(lidarPointsPrev.begin(), lidarPointsPrev.begin() + closestPointsCount, comp);
+    std::make_heap(lidarPointsPrev.begin(), lidarPointsPrev.end(), compOperator);
+    std::sort_heap(lidarPointsPrev.begin(), lidarPointsPrev.begin() + closestPointsCount, compOperator);
 
-    std::make_heap(lidarPointsCurr.begin(), lidarPointsCurr.end(), comp);
-    std::sort_heap(lidarPointsCurr.begin(), lidarPointsCurr.begin() + closestPointsCount, comp);
+    std::make_heap(lidarPointsCurr.begin(), lidarPointsCurr.end(), compOperator);
+    std::sort_heap(lidarPointsCurr.begin(), lidarPointsCurr.begin() + closestPointsCount, compOperator);
 
     auto sumLidarPointX = [](const double sumLidarPoint, const LidarPoint &lp) {return sumLidarPoint + lp.x;};
     double meanXPrev = std::accumulate(lidarPointsPrev.begin(), lidarPointsPrev.begin() + closestPointsCount, 0.0, sumLidarPointX) / closestPointsCount;
