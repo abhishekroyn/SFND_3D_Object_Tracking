@@ -295,7 +295,7 @@ void computeTTCLidar(std::vector<LidarPoint> &lidarPointsPrev,
 
     for (auto it1 = lidarPointsPrev.begin(); it1 != lidarPointsPrev.end(); ++it1)
     {
-        if (abs(it1->y) <= laneWidth / 2.0)
+        if (abs(it1->y) >= laneWidth / 2.0)
         { // 3D point within ego lane?
             lidarPointsPrev.erase(it1);
             it1--;
@@ -304,7 +304,7 @@ void computeTTCLidar(std::vector<LidarPoint> &lidarPointsPrev,
 
     for (auto it2 = lidarPointsCurr.begin(); it2 != lidarPointsCurr.end(); ++it2)
     {
-        if (abs(it2->y) <= laneWidth / 2.0)
+        if (abs(it2->y) >= laneWidth / 2.0)
         { // 3D point within ego lane?
             lidarPointsCurr.erase(it2);
             it2--;
