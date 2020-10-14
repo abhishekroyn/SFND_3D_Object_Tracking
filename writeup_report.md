@@ -27,15 +27,16 @@ The writeup (writeup_report.md) included statement and supporting images that ex
 
 (File : 'camFusion_Student.cpp'; lines : 333-389)
 Here, each bounding box is assigned the match candidate with the highest number of occurrences. My approach,
-	- loop through each of the bounding boxes in previous frame
-	- loop through each of the matches
-	- filter out matches belonging to a particular bounding box in previous frame
-	- loop throught each of these filtered matches
-	- loop through each of the bounding boxes in current frame
-	- associate each of the bounding boxes in current frame to their corresponding matched keypoints
-	- find out bounding box in current frame having maximum occurences of the matched keypoints
-	- associate bounding box from previous frame to the bounding box in current frame
-	- repeat the process for each of the bounding boxes in previous frame to associate it with the corresponding bounding box in current frame
+
+* loop through each of the bounding boxes in previous frame
+* loop through each of the matches
+* filter out matches belonging to a particular bounding box in previous frame
+* loop throught each of these filtered matches
+* loop through each of the bounding boxes in current frame
+* associate each of the bounding boxes in current frame to their corresponding matched keypoints
+* find out bounding box in current frame having maximum occurences of the matched keypoints
+* associate bounding box from previous frame to the bounding box in current frame
+* repeat the process for each of the bounding boxes in previous frame to associate it with the corresponding bounding box in current frame
 
 ##### Sample - Current Frame Bounding Box ID vs Current Frame Keypoint Index
 
@@ -70,14 +71,14 @@ The above table is for previous frame bounding box ID-0. Now most of matching cu
 
 (File : 'camFusion_Student.cpp'; lines : 282-330)
 Here, the code returns the time-to-collision in second using only Lidar measurements. My approach,
-	- assume width of the ego lane
-	- remove lidar points outside the ego lane, if any
-    - store the lidar points in heap data structure
-    - sort the lidar points in order
-    - choose nearest 200 lidar points to determine their mean location
-    - do the same for both previous and current lidar points to find respective closest mean distances
-    - calculate time between two measurements in seconds
-    - calculate time-to-collision based on equation derived in the tutorial
+* assume width of the ego lane
+* remove lidar points outside the ego lane, if any
+* store the lidar points in heap data structure
+* sort the lidar points in order
+* choose nearest 200 lidar points to determine their mean location
+* do the same for both previous and current lidar points to find respective closest mean distances
+* calculate time between two measurements in seconds
+* calculate time-to-collision based on equation derived in the tutorial
 
 ##### TTC-Lidar calculation equation
 
@@ -123,28 +124,28 @@ The code is able to deal with outlier Lidar points in a statistically robust way
 
 (File : 'camFusion_Student.cpp'; lines : 138-206)
 Here, the code adds the keypoint correspondences to the "kptMatches" property of the respective bounding boxes. My approach,
-    - loop through each of the keypoint-matches
-    - get the keypoint index for current frame using keypoint match
-    - get the keypoint for current frame using keypoint index
-    - check if bounding box for current frame contains the keypoint
-    - get the keypoint index for previous frame using keypoint match
-    - get the keypoint for previous frame using keypoint index
-    - calculate euclidean distance between keypoints from current frame and previous frame
-    - store the euclidean distance in a vector array
-    - repeat the same for rest of the keypoint-matches
-    - calculate mean value of all the stored euclidean distances
-    - loop through each of the keypoint-matches
-    - get the keypoint index for current frame using keypoint match
-    - get the keypoint for current frame using keypoint index
-    - check if bounding box for current frame contains the keypoint
-    - get the keypoint index for previous frame using keypoint match
-    - get the keypoint for previous frame using keypoint index
-    - calculate euclidean distance between keypoints from current frame and previous frame
-    - calculate enhanced mean value of all the stored euclidean distances by including a multiplication factor
-    - check if the euclidean distance is less than this enhanced mean value
-    - store the keypoint for current frame with bounding box for current frame
-    - store the keypoint-matches for current frame with bounding box for current frame
-    - repeat the same for rest of the keypoint-matches
+* loop through each of the keypoint-matches
+* get the keypoint index for current frame using keypoint match
+* get the keypoint for current frame using keypoint index
+* check if bounding box for current frame contains the keypoint
+* get the keypoint index for previous frame using keypoint match
+* get the keypoint for previous frame using keypoint index
+* calculate euclidean distance between keypoints from current frame and previous frame
+* store the euclidean distance in a vector array
+* repeat the same for rest of the keypoint-matches
+* calculate mean value of all the stored euclidean distances
+* loop through each of the keypoint-matches
+* get the keypoint index for current frame using keypoint match
+* get the keypoint for current frame using keypoint index
+* check if bounding box for current frame contains the keypoint
+* get the keypoint index for previous frame using keypoint match
+* get the keypoint for previous frame using keypoint index
+* calculate euclidean distance between keypoints from current frame and previous frame
+* calculate enhanced mean value of all the stored euclidean distances by including a multiplication factor
+* check if the euclidean distance is less than this enhanced mean value
+* store the keypoint for current frame with bounding box for current frame
+* store the keypoint-matches for current frame with bounding box for current frame
+* repeat the same for rest of the keypoint-matches
 
 ##### Analysis : 
 
@@ -157,23 +158,23 @@ As it is mentioned above, the outlier matches have been removed based on the euc
 
 (File : 'camFusion_Student.cpp'; lines : 209-279)
 Here, the code returns the time-to-collision in second using only keypoint correspondences obtained through image frames. My approach,
-    - loop through each of the keypoint matches in current frame
-    - get current keypoint and its matched partner in the previous frame for outer loop
-    - loop through each of the keypoint matches in inner loop
-    - set minimum distance for valid keypoint distances in same frame
-    - get next keypoint and its matched partner in the prev. frame for inner loop
-    - compute distance between keypoints in current frame for outler loop and inner loop
-    - compute distance between keypoints in previous frame for outler loop and inner loop
-    - check if distances for previous frame and current frame are valid respectively
-    - calculate distance ratio using distances from previous frame and current frame
-    - store the distance ratio in vector array
-    - repeat the same for rest of the keypoint matches in inner loop
-    - repeat the same for rest of the keypoint matches in outer loop
-    - check if distance ratio vector array contains any value
-    - sort distance ratios
-    - calculate median distance ratio
-    - calculate time between two measurements in seconds
-    - calculate TTC based on equation derived in the tutorial
+* loop through each of the keypoint matches in current frame
+* get current keypoint and its matched partner in the previous frame for outer loop
+* loop through each of the keypoint matches in inner loop
+* set minimum distance for valid keypoint distances in same frame
+* get next keypoint and its matched partner in the prev. frame for inner loop
+* compute distance between keypoints in current frame for outler loop and inner loop
+* compute distance between keypoints in previous frame for outler loop and inner loop
+* check if distances for previous frame and current frame are valid respectively
+* calculate distance ratio using distances from previous frame and current frame
+* store the distance ratio in vector array
+* repeat the same for rest of the keypoint matches in inner loop
+* repeat the same for rest of the keypoint matches in outer loop
+* check if distance ratio vector array contains any value
+* sort distance ratios
+* calculate median distance ratio
+* calculate time between two measurements in seconds
+* calculate TTC based on equation derived in the tutorial
 
 ##### TTC-Camera calculation equation
 
@@ -291,9 +292,9 @@ To improve the accuracy of TTC-Lidar, one way is to include more points for the 
 #### 1. Run several detector / descriptor combinations and look at the differences in TTC estimation. Find out which methods perform best and also include several examples where camera-based TTC estimation is way off. As with Lidar, describe your observations again and also look into potential reasons.
 
 TOP3 detector / descriptor combinations resulted from previously submitted & reviewed mid-term project - SFND_2D_Feature_Tracking are listed below. They were chosen for their better performance compared to other combinations in terms of accuracy and speed.
-	- [1st] FAST + BRIEF
-	- [2nd] FAST + ORB
-	- [3rd] FAST + BRISK
+* [1st] FAST + BRIEF
+* [2nd] FAST + ORB
+* [3rd] FAST + BRISK
 
 These detector / descriptor combinations have been compared with regard to the TTC estimate on a frame-by-frame basis. They are represeted in tabular form below, to represent the different TTCs to facilitate comparison.
 
