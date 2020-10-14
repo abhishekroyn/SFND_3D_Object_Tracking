@@ -311,7 +311,7 @@ void computeTTCLidar(std::vector<LidarPoint> &lidarPointsPrev,
         }
     }
 
-    unsigned int closestPointsCount = 100;
+    unsigned int closestPointsCount = 200;
 
     auto compOperator = [](const LidarPoint &lp1, const LidarPoint &lp2){return lp1.x > lp2.x;};
 
